@@ -1,9 +1,13 @@
+# atan and sin - until not changing
+# pow
+
 class Real:
     PRECISION = 60
     MAX_MANTISS = 10000
     MIN_MANTISS = -100
 
     _PI = 0
+    _TAU = 0
 
     def __init__(self, intFrom):
         # check int
@@ -92,6 +96,19 @@ class Real:
         res.mantiss += self.mantiss + other.mantiss
         return res.get_proper_zero()
 
+    def floor(self):
+        if self.mantiss <= 0:
+            return Real(0)
+        if self.mantiss <= Real.PRECISION:
+            return Real(int(str(self.val)[:Real.PRECISION]))
+        return self.val + 10 ** (self.mantiss - Real.PRECISION)
+
+    def __floordiv__(self, other):
+        return (self / other).floor()
+
+    def __mod__(self, other):
+        return self - other * (self // other)
+
     def sqrt(self):
         # check zero
         if self.zero:
@@ -106,6 +123,9 @@ class Real:
             lastVal = guess.copy()
             guess = (self / guess + guess) / Real(2)
         return guess
+
+    def power(self, other):
+        pass
 
     def atan(self):
         # check zero
@@ -123,7 +143,6 @@ class Real:
         res = self.copy()
         self_squared = self * self
         current_power_of_self = self.copy()
-        b = 1
         for i in range(1, 100):
             current_power_of_self *= self_squared
             res = res + Real(-1 if i%2 else 1) * current_power_of_self / Real(2 * i + 1)
@@ -143,12 +162,37 @@ class Real:
 
     @classmethod
     def pi(cls):
-        if cls._PI:
-            return cls._PI
-        return ((Real(5).sqrt() - Real(1)) / Real(4)).asin() * Real(10)
+        if not cls._PI:
+            cls._PI = ((Real(5).sqrt() - Real(1)) / Real(4)).asin() * Real(10)
+        return cls._PI
+
+    @classmethod
+    def tau(cls):
+        if not cls._TAU:
+            cls._TAU = cls.pi() * Real(2)
+        return cls._TAU
 
     def sin(self):
-        return Real(0)
+        # border cases
+        if self.zero:
+            return Real(0)
+        if self.sign == -1:
+            return (-self).sin()
+        val = self % Real.tau()
+        if val > Real.pi():
+            return -(Real.tau() - val).sin()
+        if val > Real.pi() / Real(2):
+            val = Real.pi() - val
+        # 0 < val < pi/2
+        res = Real(0)
+        val_squared = val * val
+        current_power_of_val = val.copy()
+        fact = Real(1)
+        for i in range(1,10):
+            res += current_power_of_val / fact
+            current_power_of_val *= val_squared
+            fact *= Real(2 * i) * Real(2 * i + 1) * Real(-1)
+        return res
 
     def cos(self):
         return (Real.pi() / Real(2) - self).sin()

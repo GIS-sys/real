@@ -61,22 +61,20 @@ class TestRealMethods(unittest.TestCase):
             self.assert_equal(Real(4) / Real(0), 0)
 
     def test_floordiv(self):
-        pass
+        self.assertTrue(Real(123) // Real(12), 123 // 12)
+        self.assertTrue((Real(123) / Real(7)) // (Real(12) / Real(13)), (123 / 7) // (12 / 13))
 
     def test_mod(self):
-        pass
+        self.assertTrue(Real(123) % Real(12), 123 % 12)
+        self.assertTrue((Real(123) / Real(7)) % (Real(12) / Real(13)), (123 / 7) % (12 / 13))
 
     def test_sqrt(self):
         self.assert_equal(Real(0).sqrt(), 0)
         self.assert_equal(Real(123).sqrt(), math.sqrt(123))
         self.assert_equal((Real(123) / Real(33)).sqrt(), math.sqrt(123 / 33))
 
-    def test_trig_functions(self):
-        pass
-        #self.assert_equal(Real(0).tan(), 0)
-        #self.assert_equal((Real(123) / Real(779)).cos(), math.cos(123/779))
-        #self.assert_equal((Real(123) / Real(779)).sin(), math.sin(123/779))
-        #self.assert_equal((Real(123) / Real(779)).tan(), math.tan(123/779))
+    def test_pow(self):
+        self.assertTrue(False)
 
     def test_arc_functions(self):
         self.assert_equal(Real.pi(), math.pi)
@@ -84,6 +82,14 @@ class TestRealMethods(unittest.TestCase):
         self.assert_equal((Real(3) / Real(7)).asin(), math.asin(3 / 7))
         self.assert_equal((Real(3) / Real(7)).acos(), math.acos(3 / 7))
         self.assert_equal((Real(3) / Real(7)).atan(), math.atan(3 / 7))
+
+    def test_trig_functions(self):
+        self.assert_equal(Real(0).sin(), 0)
+        self.assert_equal((Real.pi() / Real(2)).sin(), 1)
+        self.assert_equal(Real(0).tan(), 0)
+        self.assert_equal((Real(123) / Real(779)).sin(), math.sin(123/779))
+        self.assert_equal((Real(123) / Real(779)).cos(), math.cos(123/779))
+        self.assert_equal((Real(123) / Real(779)).tan(), math.tan(123/779))
 
     def test_comparators(self):
         # assertTrue
