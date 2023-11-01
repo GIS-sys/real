@@ -39,7 +39,7 @@ class Real:
         res.zero = self.zero
         return res
 
-    def get_proper_zero(self):
+    def _get_proper_zero(self):
         if self.val == 0 or self.mantiss < Real.MIN_MANTISS:
             return Real(0)
         return self.copy()
@@ -64,7 +64,7 @@ class Real:
         while len(str(res.val)) < Real.PRECISION:
             res.val = res.val * 10 + val1 // val2
             val1 = (val1 - val2 * (val1 // val2)) * 10
-        return res.get_proper_zero()
+        return res._get_proper_zero()
 
     def __add__(self, other):
         # check zero
@@ -79,7 +79,7 @@ class Real:
             return res
         res.mantiss -= Real.PRECISION
         res.mantiss += minMantiss
-        return res.get_proper_zero()
+        return res._get_proper_zero()
 
     def __sub__(self, other):
         return self + (-other)
@@ -93,7 +93,7 @@ class Real:
         res.sign = self.sign * other.sign
         res.mantiss -= Real.PRECISION * 2
         res.mantiss += self.mantiss + other.mantiss
-        return res.get_proper_zero()
+        return res._get_proper_zero()
 
     def floor(self):
         if self.mantiss <= 0:
