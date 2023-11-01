@@ -1,7 +1,7 @@
 class Real:
     PRECISION = 60
-    MAX_MANTISS = 1000
-    MIN_MANTISS = -10
+    MAX_MANTISS = 10000
+    MIN_MANTISS = -100
 
     def __init__(self, intFrom):
         # check int
@@ -224,11 +224,6 @@ if __name__ == "__main__":
     print(math.sqrt(1234))
     print(Real(1234).sqrt())
 
-    print(math.acos(1234 / 5561))
-    print((Real(1234) / Real(5561)).acos())
-
-    print("-------------------")
-    print("acos(0.99)")
-    print(math.acos(0.999999999))
-    print((Real(999999999)/Real(1000000000)).acos())
+    print(math.acos(9999999999998/10000000000000))
+    print((Real(9999999999998)/Real(10000000000000)).acos())
 
