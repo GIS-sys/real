@@ -3,6 +3,8 @@ class Real:
     MAX_MANTISS = 10000
     MIN_MANTISS = -100
 
+    _PI = 0
+
     def __init__(self, intFrom):
         # check int
         if not isinstance(intFrom, int):
@@ -41,10 +43,10 @@ class Real:
 
     def __truediv__(self, other):
         # check zero
-        if self.zero:
-            return Real(0)
         if other.zero:
             raise ZeroDivisionError("Real: Division by zero")
+        if self.zero:
+            return Real(0)
         # set sign and mantiss
         res = Real(1)
         res.sign = self.sign * other.sign
@@ -113,10 +115,10 @@ class Real:
         if self.sign == -1:
             return -(-self).atan()
         if self > Real(1):
-            return Real.PI / Real(2) - (Real(1) / self).atan()
+            return Real.pi() / Real(2) - (Real(1) / self).atan()
         if self > Real(1) / Real(2):
             b = Real(1) / Real(3).sqrt()
-            return ((self - b) / (Real(1) + self * b)).atan() + Real.PI / Real(6)
+            return ((self - b) / (Real(1) + self * b)).atan() + Real.pi() / Real(6)
         # iterate until get result
         res = self.copy()
         self_squared = self * self
@@ -130,14 +132,29 @@ class Real:
     def asin(self):
         # some cases
         if self >= Real(1):
-            return Real.PI / Real(2)
+            return Real.pi() / Real(2)
         if self <= Real(-1):
-            return -Real.PI / Real(2)
+            return -Real.pi() / Real(2)
         # calculate from atan
         return (self / (Real(1) - self * self).sqrt()).atan()
 
     def acos(self):
-        return Real.PI / Real(2) - self.asin()
+        return Real.pi() / Real(2) - self.asin()
+
+    @classmethod
+    def pi(cls):
+        if cls._PI:
+            return cls._PI
+        return ((Real(5).sqrt() - Real(1)) / Real(4)).asin() * Real(10)
+
+    def sin(self):
+        return Real(0)
+
+    def cos(self):
+        return (Real.pi() / Real(2) - self).sin()
+
+    def tan(self):
+        return self.sin() / self.cos()
 
     def __neg__(self):
         if self.zero:
@@ -184,23 +201,4 @@ class Real:
 
     def __ge__(self, other):
         return not(self < other)
-
-Real.PI = ((Real(5).sqrt() - Real(1)) / Real(4)).asin() * Real(10)
-
-if __name__ == "__main__":
-    import math
-    print(123 / 9977)
-    print(Real(123) / Real(9977))
-
-    print(-445 + 440)
-    print(Real(-445) + Real(440))
-
-    print(1334 * 23)
-    print(Real(1334) * Real(23))
-
-    print(math.sqrt(1234))
-    print(Real(1234).sqrt())
-
-    print(math.acos(9999999999998/10000000000000))
-    print((Real(9999999999998)/Real(10000000000000)).acos())
 
