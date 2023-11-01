@@ -1,4 +1,3 @@
-# atan and sin - until not changing
 # pow
 
 class Real:
@@ -143,7 +142,11 @@ class Real:
         res = self.copy()
         self_squared = self * self
         current_power_of_self = self.copy()
-        for i in range(1, 100):
+        lastVal = Real(0)
+        i = 0
+        while lastVal != res:
+            lastVal = res
+            i += 1
             current_power_of_self *= self_squared
             res = res + Real(-1 if i%2 else 1) * current_power_of_self / Real(2 * i + 1)
         return res
@@ -184,14 +187,18 @@ class Real:
         if val > Real.pi() / Real(2):
             val = Real.pi() - val
         # 0 < val < pi/2
-        res = Real(0)
+        res = self.copy()
         val_squared = val * val
         current_power_of_val = val.copy()
         fact = Real(1)
-        for i in range(1,10):
-            res += current_power_of_val / fact
+        lastVal = Real(0)
+        i = 0
+        while lastVal != res:
+            lastVal = res
+            i += 1
             current_power_of_val *= val_squared
             fact *= Real(2 * i) * Real(2 * i + 1) * Real(-1)
+            res += current_power_of_val / fact
         return res
 
     def cos(self):
