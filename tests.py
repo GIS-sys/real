@@ -74,7 +74,14 @@ class TestRealMethods(unittest.TestCase):
         self.assert_equal((Real(123) / Real(33)).sqrt(), math.sqrt(123 / 33))
 
     def test_pow(self):
-        self.assertTrue(False)
+        self.assert_equal(Real(0).pow(Real(1)), 0)
+        self.assert_equal(Real(1).pow(Real(0)), 1)
+        self.assert_equal(Real(1).pow(Real(1)), 1)
+        self.assert_equal(Real(2).pow(Real(4)), 16)
+        self.assert_equal(Real(5).pow(Real(-3)), 5**(-3))
+        self.assert_equal(Real(23).pow(Real(44)), 23**44)
+        self.assert_equal((Real(5) / Real(7)).pow(Real(3)), (5/7)**3)
+        self.assert_equal((Real(5) / Real(7)).pow(Real(3) / Real(11)), (5/7)**(3/11))
 
     def test_arc_functions(self):
         self.assert_equal(Real.pi(), math.pi)

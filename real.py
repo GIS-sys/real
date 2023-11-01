@@ -114,7 +114,7 @@ class Real:
             return Real(0)
         # check negative
         if self.sign == -1:
-            raise Exception("Real: Sqrt(negative)")
+            raise FloatingPointError("Real: Sqrt(negative)")
         # iterate until get result
         guess = Real(1)
         lastVal = Real(0)
@@ -123,14 +123,38 @@ class Real:
             guess = (self / guess + guess) / Real(2)
         return guess
 
-    def power(self, other):
-        pass
+    def pow(self, other):
+        # base cases
+        if self.zero:
+            if other.zero:
+                raise FloatingPointError("Real: 0^0")
+            return Real(0)
+        if self.sign < 0:
+            raise FloatingPointError("Real: Negative base for power")
+        if other.zero:
+            return Real(1)
+        if other.sign == -1:
+            return Real(1) / self.pow(-other)
+        # calculate power
+        res = Real(1)
+        Cnk = Real(1)
+        val = self - Real(1)
+        current_power_of_val = Real(1)
+        lastVal = Real(0)
+        i = 0
+        while lastVal != res:
+            lastVal = res.copy()
+            current_power_of_val *= val
+            Cnk *= (other - Real(i)) / Real(i + 1)
+            res += Cnk * current_power_of_val
+            i += 1
+        return res
 
     def atan(self):
         # check zero
         if self.zero:
             return self.copy()
-        # some cases
+        # base cases
         if self.sign == -1:
             return -(-self).atan()
         if self > Real(1):
@@ -145,14 +169,14 @@ class Real:
         lastVal = Real(0)
         i = 0
         while lastVal != res:
-            lastVal = res
+            lastVal = res.copy()
             i += 1
             current_power_of_self *= self_squared
             res = res + Real(-1 if i%2 else 1) * current_power_of_self / Real(2 * i + 1)
         return res
 
     def asin(self):
-        # some cases
+        # base cases
         if self >= Real(1):
             return Real.pi() / Real(2)
         if self <= Real(-1):
@@ -176,7 +200,7 @@ class Real:
         return cls._TAU
 
     def sin(self):
-        # border cases
+        # base cases
         if self.zero:
             return Real(0)
         if self.sign == -1:
@@ -194,7 +218,7 @@ class Real:
         lastVal = Real(0)
         i = 0
         while lastVal != res:
-            lastVal = res
+            lastVal = res.copy()
             i += 1
             current_power_of_val *= val_squared
             fact *= Real(2 * i) * Real(2 * i + 1) * Real(-1)
