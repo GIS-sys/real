@@ -6,22 +6,19 @@ class Real:
     def __init__(self, intFrom):
         # check int
         if not isinstance(intFrom, int):
-            raise Exception("Real cannot be created from non-int")
-        # check zero
-        if intFrom == 0:
-            self.zero = True
-            return
-        self.zero = False
+            raise TypeError("Real cannot be created from non-int")
         # set sign
         self.sign = (1 if intFrom > 0 else -1)
         intFrom = abs(intFrom)
         # check mantiss
         self.mantiss = len(str(intFrom))
-        if self.mantiss < Real.MIN_MANTISS:
+        if self.mantiss > Real.MAX_MANTISS:
+            raise OverflowError("Real: Creation overflow")
+        # check zero
+        if intFrom == 0 or self.mantiss < Real.MIN_MANTISS:
             self.zero = True
             return
-        if self.mantiss > Real.MAX_MANTISS:
-            raise Exception("Real: Creation overflow")
+        self.zero = False
         # set value
         self.val = int(str(intFrom)[:Real.PRECISION])
         while len(str(self.val)) < Real.PRECISION:
@@ -37,12 +34,17 @@ class Real:
         res.zero = self.zero
         return res
 
+    def get_proper_zero(self):
+        if self.val == 0 or self.mantiss < Real.MIN_MANTISS:
+            return Real(0)
+        return self.copy()
+
     def __truediv__(self, other):
         # check zero
         if self.zero:
             return Real(0)
         if other.zero:
-            raise Exception("Real: Division by zero")
+            raise ZeroDivisionError("Real: Division by zero")
         # set sign and mantiss
         res = Real(1)
         res.sign = self.sign * other.sign
@@ -57,7 +59,7 @@ class Real:
         while len(str(res.val)) < Real.PRECISION:
             res.val = res.val * 10 + val1 // val2
             val1 = (val1 - val2 * (val1 // val2)) * 10
-        return res
+        return res.get_proper_zero()
 
     def __add__(self, other):
         # check zero
@@ -72,23 +74,21 @@ class Real:
             return res
         res.mantiss -= Real.PRECISION
         res.mantiss += minMantiss
-        return res
+        return res.get_proper_zero()
 
     def __sub__(self, other):
         return self + (-other)
 
     def __mul__(self, other):
         # check zero
-        if self.zero:
-            return other.copy()
-        if other.zero:
-            return self.copy()
+        if self.zero or other.zero:
+            return Real(0)
         # calculate result
         res = Real(self.val * other.val)
         res.sign = self.sign * other.sign
         res.mantiss -= Real.PRECISION * 2
         res.mantiss += self.mantiss + other.mantiss
-        return res
+        return res.get_proper_zero()
 
     def sqrt(self):
         # check zero
@@ -104,29 +104,6 @@ class Real:
             lastVal = guess.copy()
             guess = (self / guess + guess) / Real(2)
         return guess
-
-    def slow_asin(self):
-        # check zero
-        if self.zero:
-            return self.copy()
-        # check bounds
-        if self < Real(-1) or self > Real(1):
-            raise Exception("Real: asin(<-1 or >1)")
-        # iterate until get result
-        current_power_of_x = self * self * self
-        res = self.copy()
-        numerator = Real(1)
-        denominator = Real(2)
-        lastVal = Real(0)
-        n = 1
-        while lastVal != res:
-            lastVal = res.copy()
-            res = res + current_power_of_x * numerator / denominator / Real(2 * n + 1)
-            current_power_of_x = current_power_of_x * self * self
-            numerator = numerator * Real(2 * n + 1)
-            denominator = denominator * Real(2 * n + 2)
-            n += 1
-        return res
 
     def atan(self):
         # check zero
