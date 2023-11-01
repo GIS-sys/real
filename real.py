@@ -1,6 +1,3 @@
-import math
-
-
 class Real:
     PRECISION = 60
     MAX_MANTISS = 1000
@@ -214,6 +211,7 @@ class Real:
 Real.PI = ((Real(5).sqrt() - Real(1)) / Real(4)).asin() * Real(10)
 
 if __name__ == "__main__":
+    import math
     print(123 / 9977)
     print(Real(123) / Real(9977))
 
